@@ -27,7 +27,7 @@ def test_data_dir(project_root):
 def sample_conversation():
     """Sample conversation data for testing."""
     return {
-        "user_input": "今天心情不太好",
+        "user_input": "I'm feeling down today",
         "expected_emotion": "sad",
         "expected_response_style": "warm companionship"
     }

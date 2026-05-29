@@ -64,52 +64,52 @@ def test_chat_completions(client):
 
 def test_emotion_keywords_happy(emotion_detector):
     """Test happy emotion keyword detection."""
-    assert emotion_detector.detect("哈哈太好了") == "happy"
-    assert emotion_detector.detect("我好开心啊") == "happy"
-    assert emotion_detector.detect("真棒") == "happy"
+    assert emotion_detector.detect("haha that's great") == "happy"
+    assert emotion_detector.detect("I'm so happy right now") == "happy"
+    assert emotion_detector.detect("awesome news") == "happy"
 
 
 def test_emotion_keywords_sad(emotion_detector):
     """Test sad emotion keyword detection."""
-    assert emotion_detector.detect("我好难过") == "sad"
-    assert emotion_detector.detect("心里难受") == "sad"
+    assert emotion_detector.detect("I feel so sad today") == "sad"
+    assert emotion_detector.detect("it really hurts inside") == "sad"
 
 
 def test_emotion_keywords_anxious(emotion_detector):
     """Test anxious emotion keyword detection."""
-    assert emotion_detector.detect("我好紧张") == "anxious"
-    assert emotion_detector.detect("压力好大") == "anxious"
-    assert emotion_detector.detect("睡不着") == "anxious"
+    assert emotion_detector.detect("I'm really nervous about this") == "anxious"
+    assert emotion_detector.detect("the stress is overwhelming") == "anxious"
+    assert emotion_detector.detect("I can't sleep at night") == "anxious"
 
 
 def test_emotion_keywords_angry(emotion_detector):
     """Test angry emotion keyword detection."""
-    assert emotion_detector.detect("气死我了") == "angry"
-    assert emotion_detector.detect("烦死了") == "angry"
+    assert emotion_detector.detect("I'm so angry right now") == "angry"
+    assert emotion_detector.detect("this is so frustrating") == "angry"
 
 
 def test_emotion_keywords_confused(emotion_detector):
     """Test confused emotion keyword detection."""
-    assert emotion_detector.detect("我好迷茫") == "confused"
-    assert emotion_detector.detect("不知道怎么办") == "confused"
+    assert emotion_detector.detect("I'm so confused about everything") == "confused"
+    assert emotion_detector.detect("I have no idea what to do") == "confused"
 
 
 def test_emotion_default_calm(emotion_detector):
     """Test default calm emotion for neutral input."""
-    assert emotion_detector.detect("今天天气不错") == "calm"
+    assert emotion_detector.detect("the weather is nice today") == "calm"
 
 
 def test_emotion_get_style(emotion_detector):
     """Test getting emotion response style."""
-    assert emotion_detector.get_style("happy") == "共享喜悦"
-    assert emotion_detector.get_style("sad") == "温暖陪伴"
-    assert emotion_detector.get_style("anxious") == "轻声安抚"
+    assert emotion_detector.get_style("happy") == "share the excitement"
+    assert emotion_detector.get_style("sad") == "warm companionship"
+    assert emotion_detector.get_style("anxious") == "gentle reassurance"
 
 
 def test_emotion_get_name(emotion_detector):
     """Test getting emotion display name."""
-    assert emotion_detector.get_emotion_name("happy") == "开心"
-    assert emotion_detector.get_emotion_name("sad") == "悲伤"
+    assert emotion_detector.get_emotion_name("happy") == "joyful"
+    assert emotion_detector.get_emotion_name("sad") == "sad"
 
 
 def test_emotions_dict():

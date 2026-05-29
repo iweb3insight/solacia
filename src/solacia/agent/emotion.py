@@ -11,37 +11,36 @@ from solacia.config import settings
 
 
 # Emotion type definitions
-# name/style are runtime data for the Chinese-speaking bot persona
 EMOTIONS = {
     "happy": {
-        "name": "开心",
-        "style": "共享喜悦",
-        "keywords": ["哈哈", "太好了", "开心", "高兴", "爽", "棒", "好耶", "嘻嘻"]
+        "name": "joyful",
+        "style": "share the excitement",
+        "keywords": ["haha", "great", "awesome", "amazing", "yay", "happy", "excited", "wonderful", "love it", "lol"]
     },
     "calm": {
-        "name": "平静",
-        "style": "日常聊天",
-        "keywords": ["嗯", "还好", "一般", "正常"]
+        "name": "calm",
+        "style": "casual chat",
+        "keywords": ["fine", "okay", "alright", "normal", "meh", "not bad"]
     },
     "anxious": {
-        "name": "焦虑",
-        "style": "轻声安抚",
-        "keywords": ["紧张", "担心", "焦虑", "睡不着", "压力", "害怕", "不安"]
+        "name": "anxious",
+        "style": "gentle reassurance",
+        "keywords": ["nervous", "worried", "anxious", "can't sleep", "stress", "stressed", "scared", "uneasy", "overthinking"]
     },
     "sad": {
-        "name": "悲伤",
-        "style": "温暖陪伴",
-        "keywords": ["难受", "难过", "伤心", "哭", "委屈", "失落", "低落"]
+        "name": "sad",
+        "style": "warm companionship",
+        "keywords": ["sad", "hurts", "crying", "upset", "lonely", "down", "depressed", "heartbroken", "miss"]
     },
     "angry": {
-        "name": "愤怒",
-        "style": "倾听理解",
-        "keywords": ["生气", "气死", "烦死", "讨厌", "烦", "操", "靠", "妈的"]
+        "name": "angry",
+        "style": "listen without judgment",
+        "keywords": ["angry", "furious", "hate", "annoyed", "frustrated", "frustrating", "pissed", "unfair", "ridiculous"]
     },
     "confused": {
-        "name": "困惑",
-        "style": "耐心解释",
-        "keywords": ["不知道", "迷茫", "怎么办", "搞不懂", "不理解"]
+        "name": "confused",
+        "style": "patient guidance",
+        "keywords": ["confused", "lost", "don't understand", "what should", "no idea", "torn", "uncertain"]
     }
 }
 
@@ -106,19 +105,19 @@ class EmotionDetector:
         Returns:
             Emotion identifier (defaults to "calm" on failure).
         """
-        prompt = f"""请识别以下文本的情绪，只返回情绪标识，不要返回其他内容。
+        prompt = f"""Identify the emotion in the following text. Return ONLY the emotion label, nothing else.
 
-情绪类型：
-- happy: 开心、高兴、兴奋
-- calm: 平静、正常、一般
-- anxious: 焦虑、紧张、担心
-- sad: 悲伤、难过、失落
-- angry: 愤怒、生气、烦躁
-- confused: 困惑、迷茫、不确定
+Emotion types:
+- happy: joy, excitement, elation
+- calm: neutral, normal, relaxed
+- anxious: worry, stress, nervousness
+- sad: sadness, grief, loneliness
+- angry: anger, frustration, irritation
+- confused: confusion, uncertainty, indecision
 
-文本：{text}
+Text: {text}
 
-情绪标识："""
+Emotion label:"""
 
         try:
             response = self.client.chat.completions.create(
@@ -150,7 +149,7 @@ class EmotionDetector:
         """
         if emotion in EMOTIONS:
             return EMOTIONS[emotion]["style"]
-        return "日常聊天"
+        return "casual chat"
 
     def get_emotion_name(self, emotion: str) -> str:
         """
@@ -164,4 +163,4 @@ class EmotionDetector:
         """
         if emotion in EMOTIONS:
             return EMOTIONS[emotion]["name"]
-        return "平静"
+        return "calm"
