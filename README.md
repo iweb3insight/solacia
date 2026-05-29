@@ -1,4 +1,4 @@
-# Solacia 🤖💬
+# Solacia
 
 <p align="center">
   <img src="assets/banner.png" alt="Solacia Banner" width="800">
