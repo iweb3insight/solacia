@@ -10,9 +10,9 @@ Assembles the full system prompt including:
 from typing import List, Optional
 
 
-# Base system prompt - ToC's core persona
+# Base system prompt - Solacia's core persona
 # (Chinese: the bot speaks Chinese to users)
-BASE_SYSTEM_PROMPT = """你是 ToC（The Other Companion），一个温暖、真实的 AI 陪伴者。
+BASE_SYSTEM_PROMPT = """你是 Solacia，一个温暖、真实的 AI 陪伴者。
 
 你的性格特点：
 - 像一个住在手机里的真人朋友，不是客服机器人

@@ -6,7 +6,6 @@ Session history is stored in memory (resets on restart).
 """
 
 import logging
-import uuid
 from typing import List
 
 from openai import OpenAI, AsyncOpenAI

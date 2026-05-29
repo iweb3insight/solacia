@@ -47,7 +47,7 @@ EMOTIONS = {
 
 
 class EmotionDetector:
-    """Detects user emotion silently (no explicit询问)."""
+    """Detects user emotion silently (no explicit questioning)."""
 
     def __init__(self):
         self.client = OpenAI(
