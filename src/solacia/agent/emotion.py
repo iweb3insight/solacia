@@ -5,9 +5,12 @@ Silently detects user emotion using keyword matching (fast path)
 and LLM fallback (slow path).
 """
 
+import logging
 from typing import Optional
 from openai import OpenAI
 from solacia.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 # Emotion type definitions
@@ -135,6 +138,7 @@ Emotion label:"""
             return "calm"
 
         except Exception:
+            logger.warning("Emotion detection via LLM failed, defaulting to 'calm'", exc_info=True)
             return "calm"
 
     def get_style(self, emotion: str) -> str:

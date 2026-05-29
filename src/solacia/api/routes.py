@@ -9,26 +9,56 @@ FastAPI routes for:
 
 import json
 import logging
+import time
 import uuid
 from typing import List, Optional
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from solacia.agent.conversation import ConversationEngine
+from solacia.config import settings
 from solacia.memory.diary import DiaryService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Conversation engine cache (keyed by session_id)
-conversation_engines: dict[str, ConversationEngine] = {}
-
 # Diary service (shared instance)
 diary_service = DiaryService()
+
+
+# ==================== Session Cache (TTL + Capacity) ====================
+
+MAX_SESSIONS = 1000
+SESSION_TTL_SECONDS = 1800  # 30 minutes
+
+# {session_id: (ConversationEngine, last_access_timestamp)}
+_session_cache: dict[str, tuple[ConversationEngine, float]] = {}
+
+
+def _get_or_create_engine(session_id: str) -> ConversationEngine:
+    """Get a cached engine or create a new one. Evicts stale/full entries."""
+    now = time.time()
+
+    # Evict stale sessions
+    stale = [k for k, (_, ts) in _session_cache.items() if now - ts > SESSION_TTL_SECONDS]
+    for k in stale:
+        del _session_cache[k]
+
+    # If at capacity, evict the least recently used
+    if session_id not in _session_cache and len(_session_cache) >= MAX_SESSIONS:
+        lru_key = min(_session_cache, key=lambda k: _session_cache[k][1])
+        del _session_cache[lru_key]
+
+    if session_id not in _session_cache:
+        _session_cache[session_id] = (ConversationEngine(), now)
+
+    engine, _ = _session_cache[session_id]
+    _session_cache[session_id] = (engine, now)
+    return engine
 
 
 # ==================== Data Models ====================
@@ -36,7 +66,7 @@ diary_service = DiaryService()
 
 class ChatMessage(BaseModel):
     role: str
-    content: str
+    content: str = Field(..., max_length=4000)
 
 
 class ChatRequest(BaseModel):
@@ -63,11 +93,7 @@ async def chat_completions(request: ChatRequest):
     Supports both streaming and non-streaming modes.
     """
     session_id = request.session_id or str(uuid.uuid4())
-
-    if session_id not in conversation_engines:
-        conversation_engines[session_id] = ConversationEngine()
-
-    engine = conversation_engines[session_id]
+    engine = _get_or_create_engine(session_id)
 
     user_messages = [m for m in request.messages if m.role == "user"]
     if not user_messages:
