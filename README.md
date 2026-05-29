@@ -1,5 +1,9 @@
 # Solacia 🤖💬
 
+<p align="center">
+  <img src="assets/banner.png" alt="Solacia Banner" width="600">
+</p>
+
 > An agentic AI companion that reads the room, not just the prompt.
 > Silent emotion detection, adaptive empathy, mood journaling. OpenAI-compatible.
 
