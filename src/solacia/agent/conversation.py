@@ -8,11 +8,11 @@ Session history is stored in memory (resets on restart).
 import logging
 from typing import List
 
-from openai import OpenAI, AsyncOpenAI
+from openai import AsyncOpenAI, OpenAI
 
-from solacia.config import settings
 from solacia.agent.emotion import EmotionDetector
 from solacia.agent.prompts import PromptManager
+from solacia.config import settings
 
 logger = logging.getLogger(__name__)
 

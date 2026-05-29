@@ -1,11 +1,18 @@
-"""Entry point for `python -m solacia`."""
+"""Entry point for `python -m solacia` and `solacia` CLI."""
 
 import uvicorn
+
 from solacia.config import settings
 
-if __name__ == "__main__":
+
+def main():
+    """Start the Solacia server."""
     uvicorn.run(
         "solacia.server:app",
         host=settings.API_HOST,
         port=settings.API_PORT,
     )
+
+
+if __name__ == "__main__":
+    main()

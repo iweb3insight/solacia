@@ -5,6 +5,18 @@ description = "An agentic AI companion that reads the room, not just the prompt"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Framework :: FastAPI",
+    "Typing :: Typed",
+]
 dependencies = [
     "fastapi>=0.100.0",
     "uvicorn>=0.23.0",
@@ -17,12 +29,35 @@ dependencies = [
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
     "httpx>=0.24.0",
     "ruff>=0.1.0",
+    "bandit>=1.7.0",
+    "pip-audit>=2.6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/iweb3insight/solacia"
+Repository = "https://github.com/iweb3insight/solacia"
+Issues = "https://github.com/iweb3insight/solacia/issues"
+Documentation = "https://github.com/iweb3insight/solacia/tree/main/docs"
+
+[project.scripts]
+solacia = "solacia.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "C90", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "strict"
 
 [build-system]
 requires = ["setuptools>=68.0"]

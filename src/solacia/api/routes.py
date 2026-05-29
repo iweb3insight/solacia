@@ -11,15 +11,14 @@ import json
 import logging
 import time
 import uuid
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from solacia.agent.conversation import ConversationEngine
-from solacia.config import settings
 from solacia.memory.diary import DiaryService
 
 logger = logging.getLogger(__name__)

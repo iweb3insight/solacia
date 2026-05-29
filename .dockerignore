@@ -1,0 +1,46 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+dist
+build
+.eggs
+
+# Virtual environments
+venv
+.venv
+env
+
+# Environment files (secrets)
+.env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache
+.coverage
+htmlcov
+.ruff_cache
+
+# Data (runtime-generated)
+data/*.db
+data/*.sqlite*
+
+# Docs (not needed in container)
+docs/
+*.md
+!README.md

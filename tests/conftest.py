@@ -2,9 +2,10 @@
 Solacia - Test Configuration
 """
 
-import pytest
 import sys
 from pathlib import Path
+
+import pytest
 
 # Add src/ to Python path
 project_root = Path(__file__).parent.parent
@@ -29,5 +30,5 @@ def sample_conversation():
     return {
         "user_input": "I'm feeling down today",
         "expected_emotion": "sad",
-        "expected_response_style": "warm companionship"
+        "expected_response_style": "warm companionship",
     }

@@ -5,6 +5,7 @@ Starts a real uvicorn server and sends actual HTTP requests.
 No mocks, no TestClient — full network round-trip.
 """
 
+import contextlib
 import os
 import signal
 import subprocess
@@ -67,10 +68,8 @@ def server():
         proc.wait()
 
     # Cleanup test DB
-    try:
+    with contextlib.suppress(FileNotFoundError):
         os.remove("data/e2e_test.db")
-    except FileNotFoundError:
-        pass
 
 
 @pytest.fixture
@@ -103,11 +102,14 @@ def test_list_models(api):
 
 def test_chat_openai_compatible_shape(api):
     """Response follows OpenAI chat.completion schema."""
-    r = api.post("/v1/chat/completions", json={
-        "model": "solacia",
-        "messages": [{"role": "user", "content": "hello"}],
-        "stream": False,
-    })
+    r = api.post(
+        "/v1/chat/completions",
+        json={
+            "model": "solacia",
+            "messages": [{"role": "user", "content": "hello"}],
+            "stream": False,
+        },
+    )
     assert r.status_code == 200
     body = r.json()
 
@@ -126,10 +128,13 @@ def test_chat_openai_compatible_shape(api):
 
 def test_chat_missing_user_message_400(api):
     """Request with no user role returns 400."""
-    r = api.post("/v1/chat/completions", json={
-        "model": "solacia",
-        "messages": [{"role": "system", "content": "you are helpful"}],
-    })
+    r = api.post(
+        "/v1/chat/completions",
+        json={
+            "model": "solacia",
+            "messages": [{"role": "system", "content": "you are helpful"}],
+        },
+    )
     assert r.status_code == 400
 
 
@@ -137,47 +142,62 @@ def test_chat_session_continuity(api):
     """Same session_id preserves conversation context."""
     sid = "e2e-real-session"
 
-    r1 = api.post("/v1/chat/completions", json={
-        "model": "solacia",
-        "messages": [{"role": "user", "content": "hello"}],
-        "session_id": sid,
-    })
+    r1 = api.post(
+        "/v1/chat/completions",
+        json={
+            "model": "solacia",
+            "messages": [{"role": "user", "content": "hello"}],
+            "session_id": sid,
+        },
+    )
     assert r1.status_code == 200
 
-    r2 = api.post("/v1/chat/completions", json={
-        "model": "solacia",
-        "messages": [{"role": "user", "content": "how are you"}],
-        "session_id": sid,
-    })
+    r2 = api.post(
+        "/v1/chat/completions",
+        json={
+            "model": "solacia",
+            "messages": [{"role": "user", "content": "how are you"}],
+            "session_id": sid,
+        },
+    )
     assert r2.status_code == 200
     assert len(r2.json()["choices"][0]["message"]["content"]) > 0
 
 
 def test_chat_default_model(api):
     """Omitting model field defaults to solacia."""
-    r = api.post("/v1/chat/completions", json={
-        "messages": [{"role": "user", "content": "hi"}],
-    })
+    r = api.post(
+        "/v1/chat/completions",
+        json={
+            "messages": [{"role": "user", "content": "hi"}],
+        },
+    )
     assert r.status_code == 200
     assert r.json()["model"] == "solacia"
 
 
 def test_chat_empty_content(api):
     """Empty string content is accepted (user role exists)."""
-    r = api.post("/v1/chat/completions", json={
-        "messages": [{"role": "user", "content": ""}],
-    })
+    r = api.post(
+        "/v1/chat/completions",
+        json={
+            "messages": [{"role": "user", "content": ""}],
+        },
+    )
     assert r.status_code == 200
 
 
 def test_chat_multiple_user_messages_uses_last(api):
     """When multiple user messages are sent, the last one is used."""
-    r = api.post("/v1/chat/completions", json={
-        "messages": [
-            {"role": "user", "content": "first"},
-            {"role": "user", "content": "second"},
-        ],
-    })
+    r = api.post(
+        "/v1/chat/completions",
+        json={
+            "messages": [
+                {"role": "user", "content": "first"},
+                {"role": "user", "content": "second"},
+            ],
+        },
+    )
     assert r.status_code == 200
 
 
@@ -206,10 +226,11 @@ def test_streaming_sse_format(api):
 
     assert lines[-1] == "data: [DONE]"
 
-    data_lines = [l for l in lines if l.startswith("data: ") and "[DONE]" not in l]
+    data_lines = [line for line in lines if line.startswith("data: ") and "[DONE]" not in line]
     assert len(data_lines) >= 1
 
     import json
+
     for dl in data_lines:
         chunk = json.loads(dl.removeprefix("data: "))
         assert chunk["object"] == "chat.completion.chunk"
@@ -220,6 +241,7 @@ def test_streaming_sse_format(api):
 def test_streaming_chunk_ids_unique(api):
     """Each SSE chunk has a unique id."""
     import json
+
     with httpx.stream(
         "POST",
         f"{BASE_URL}/v1/chat/completions",
@@ -246,11 +268,14 @@ def test_streaming_chunk_ids_unique(api):
 def test_diary_full_crud_flow(api):
     """Create → read by id → list → stats."""
     # Create
-    r = api.post("/v1/diary", json={
-        "emotions": ["happy", "calm"],
-        "summary": "Nice day",
-        "message_count": 12,
-    })
+    r = api.post(
+        "/v1/diary",
+        json={
+            "emotions": ["happy", "calm"],
+            "summary": "Nice day",
+            "message_count": 12,
+        },
+    )
     assert r.status_code == 200
     entry = r.json()
     assert entry["status"] == "created"

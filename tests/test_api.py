@@ -4,8 +4,9 @@ Solacia - API Tests
 
 import pytest
 from fastapi.testclient import TestClient
+
+from solacia.agent.emotion import EMOTIONS, EmotionDetector
 from solacia.server import app
-from solacia.agent.emotion import EmotionDetector, EMOTIONS
 
 
 @pytest.fixture
@@ -21,6 +22,7 @@ def emotion_detector():
 
 
 # ==================== API Tests ====================
+
 
 def test_health_check(client):
     """Test health check endpoint."""
@@ -45,10 +47,8 @@ def test_chat_completions(client):
     """Test chat completions endpoint."""
     request_data = {
         "model": "solacia",
-        "messages": [
-            {"role": "user", "content": "hello"}
-        ],
-        "stream": False
+        "messages": [{"role": "user", "content": "hello"}],
+        "stream": False,
     }
 
     response = client.post("/v1/chat/completions", json=request_data)
@@ -61,6 +61,7 @@ def test_chat_completions(client):
 
 
 # ==================== Emotion Detection Tests ====================
+
 
 def test_emotion_keywords_happy(emotion_detector):
     """Test happy emotion keyword detection."""
@@ -124,12 +125,13 @@ def test_emotions_dict():
 
 # ==================== Diary API Tests ====================
 
+
 def test_create_diary_entry(client):
     """Test creating a diary entry."""
     request_data = {
         "emotions": ["happy", "calm"],
         "summary": "Nice weather, good mood",
-        "message_count": 10
+        "message_count": 10,
     }
 
     response = client.post("/v1/diary", json=request_data)
@@ -142,11 +144,7 @@ def test_create_diary_entry(client):
 def test_get_diary_entries(client):
     """Test getting diary entry list."""
     # Create an entry first
-    client.post("/v1/diary", json={
-        "emotions": ["happy"],
-        "summary": "test",
-        "message_count": 5
-    })
+    client.post("/v1/diary", json={"emotions": ["happy"], "summary": "test", "message_count": 5})
 
     # Get diary list
     response = client.get("/v1/diary")
@@ -159,11 +157,9 @@ def test_get_diary_entries(client):
 def test_get_diary_entry(client):
     """Test getting a single diary entry."""
     # Create an entry first
-    create_response = client.post("/v1/diary", json={
-        "emotions": ["sad"],
-        "summary": "A rough day",
-        "message_count": 8
-    })
+    create_response = client.post(
+        "/v1/diary", json={"emotions": ["sad"], "summary": "A rough day", "message_count": 8}
+    )
     entry_id = create_response.json()["id"]
 
     # Get that entry

@@ -6,6 +6,7 @@ Loads all settings from environment variables / .env file.
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load .env file

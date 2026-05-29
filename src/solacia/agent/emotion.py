@@ -7,7 +7,9 @@ and LLM fallback (slow path).
 
 import logging
 from typing import Optional
+
 from openai import OpenAI
+
 from solacia.config import settings
 
 logger = logging.getLogger(__name__)
@@ -18,33 +20,82 @@ EMOTIONS = {
     "happy": {
         "name": "joyful",
         "style": "share the excitement",
-        "keywords": ["haha", "great", "awesome", "amazing", "yay", "happy", "excited", "wonderful", "love it", "lol"]
+        "keywords": [
+            "haha",
+            "great",
+            "awesome",
+            "amazing",
+            "yay",
+            "happy",
+            "excited",
+            "wonderful",
+            "love it",
+            "lol",
+        ],
     },
     "calm": {
         "name": "calm",
         "style": "casual chat",
-        "keywords": ["fine", "okay", "alright", "normal", "meh", "not bad"]
+        "keywords": ["fine", "okay", "alright", "normal", "meh", "not bad"],
     },
     "anxious": {
         "name": "anxious",
         "style": "gentle reassurance",
-        "keywords": ["nervous", "worried", "anxious", "can't sleep", "stress", "stressed", "scared", "uneasy", "overthinking"]
+        "keywords": [
+            "nervous",
+            "worried",
+            "anxious",
+            "can't sleep",
+            "stress",
+            "stressed",
+            "scared",
+            "uneasy",
+            "overthinking",
+        ],
     },
     "sad": {
         "name": "sad",
         "style": "warm companionship",
-        "keywords": ["sad", "hurts", "crying", "upset", "lonely", "down", "depressed", "heartbroken", "miss"]
+        "keywords": [
+            "sad",
+            "hurts",
+            "crying",
+            "upset",
+            "lonely",
+            "down",
+            "depressed",
+            "heartbroken",
+            "miss",
+        ],
     },
     "angry": {
         "name": "angry",
         "style": "listen without judgment",
-        "keywords": ["angry", "furious", "hate", "annoyed", "frustrated", "frustrating", "pissed", "unfair", "ridiculous"]
+        "keywords": [
+            "angry",
+            "furious",
+            "hate",
+            "annoyed",
+            "frustrated",
+            "frustrating",
+            "pissed",
+            "unfair",
+            "ridiculous",
+        ],
     },
     "confused": {
         "name": "confused",
         "style": "patient guidance",
-        "keywords": ["confused", "lost", "don't understand", "what should", "no idea", "torn", "uncertain"]
-    }
+        "keywords": [
+            "confused",
+            "lost",
+            "don't understand",
+            "what should",
+            "no idea",
+            "torn",
+            "uncertain",
+        ],
+    },
 }
 
 
@@ -52,10 +103,7 @@ class EmotionDetector:
     """Detects user emotion silently (no explicit questioning)."""
 
     def __init__(self):
-        self.client = OpenAI(
-            api_key=settings.LLM_API_KEY,
-            base_url=settings.LLM_BASE_URL
-        )
+        self.client = OpenAI(api_key=settings.LLM_API_KEY, base_url=settings.LLM_BASE_URL)
 
     def detect(self, text: str) -> str:
         """
@@ -108,7 +156,8 @@ class EmotionDetector:
         Returns:
             Emotion identifier (defaults to "calm" on failure).
         """
-        prompt = f"""Identify the emotion in the following text. Return ONLY the emotion label, nothing else.
+        prompt = f"""Identify the emotion in the following text.
+Return ONLY the emotion label, nothing else.
 
 Emotion types:
 - happy: joy, excitement, elation
@@ -127,7 +176,7 @@ Emotion label:"""
                 model=settings.LLM_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0,
-                max_tokens=10
+                max_tokens=10,
             )
 
             emotion = response.choices[0].message.content.strip().lower()

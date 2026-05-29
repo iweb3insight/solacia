@@ -4,11 +4,12 @@ Solacia - Mood Diary Service
 SQLite-backed mood diary with CRUD and emotion statistics.
 """
 
-import sqlite3
 import json
+import sqlite3
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
 from solacia.config import settings
 
 
@@ -51,7 +52,7 @@ class DiaryService:
         emotions: List[str],
         summary: str = None,
         message_count: int = 0,
-        session_id: str = "default"
+        session_id: str = "default",
     ) -> dict:
         """
         Create a new diary entry.
@@ -76,8 +77,8 @@ class DiaryService:
                     datetime.now().isoformat(),
                     json.dumps(emotions),
                     summary,
-                    message_count
-                )
+                    message_count,
+                ),
             )
             conn.commit()
             entry_id = cursor.lastrowid
@@ -103,21 +104,13 @@ class DiaryService:
         """
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute(
-                "SELECT * FROM mood_diary WHERE id = ?",
-                (entry_id,)
-            )
+            cursor = conn.execute("SELECT * FROM mood_diary WHERE id = ?", (entry_id,))
             row = cursor.fetchone()
             if row:
                 return self._row_to_dict(row)
             return None
 
-    def get_entries(
-        self,
-        session_id: str = None,
-        limit: int = 10,
-        offset: int = 0
-    ) -> List[Dict]:
+    def get_entries(self, session_id: str = None, limit: int = 10, offset: int = 0) -> List[Dict]:
         """
         Get a list of diary entries.
 
@@ -134,13 +127,14 @@ class DiaryService:
 
             if session_id:
                 cursor = conn.execute(
-                    "SELECT * FROM mood_diary WHERE session_id = ? ORDER BY timestamp DESC LIMIT ? OFFSET ?",
-                    (session_id, limit, offset)
+                    "SELECT * FROM mood_diary WHERE session_id = ? "
+                    "ORDER BY timestamp DESC LIMIT ? OFFSET ?",
+                    (session_id, limit, offset),
                 )
             else:
                 cursor = conn.execute(
                     "SELECT * FROM mood_diary ORDER BY timestamp DESC LIMIT ? OFFSET ?",
-                    (limit, offset)
+                    (limit, offset),
                 )
 
             rows = cursor.fetchall()
@@ -162,7 +156,7 @@ class DiaryService:
                 SELECT emotions FROM mood_diary
                 WHERE timestamp >= datetime('now', ?)
                 """,
-                (f'-{days} days',)
+                (f"-{days} days",),
             )
 
             emotion_counts = {}
@@ -182,5 +176,5 @@ class DiaryService:
             "emotions": json.loads(row["emotions"]),
             "summary": row["summary"],
             "message_count": row["message_count"],
-            "created_at": row["created_at"]
+            "created_at": row["created_at"],
         }
