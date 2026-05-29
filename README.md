@@ -1,7 +1,7 @@
 # Solacia 🤖💬
 
 <p align="center">
-  <img src="assets/banner.png" alt="Solacia Banner" width="600">
+  <img src="assets/banner.png" alt="Solacia Banner" width="800">
 </p>
 
 > An agentic AI companion that reads the room, not just the prompt.
